@@ -8,8 +8,6 @@ namespace ticket_management.Repository
 
         Task<Event> GetById(long id);
 
-        int Add(Event @event);
-
         void Update(Event @event);
 
         void Delete(Event @event);

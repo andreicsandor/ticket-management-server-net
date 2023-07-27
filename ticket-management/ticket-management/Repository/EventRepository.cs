@@ -12,11 +12,6 @@ namespace ticket_management.Repository
             _dbContext = new TicketManagementContext();
         }
 
-        public int Add(Event @event)
-        {
-            throw new NotImplementedException();
-        }
-
         public void Delete(Event @event)
         {
             _dbContext.Remove(@event);
