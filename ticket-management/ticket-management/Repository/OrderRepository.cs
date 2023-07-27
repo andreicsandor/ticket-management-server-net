@@ -19,20 +19,19 @@ namespace ticket_management.Repository
 
             var orderId = @order.OrderId;
 
-            @order = await _dbContext.Orders
+            Order? addedOrder = await _dbContext.Orders
                 .Where(e => e.OrderId == orderId)
                 .Include(o => o.Customer)
                 .Include(o => o.TicketCategory)
                 .FirstOrDefaultAsync();
 
-            if (@order == null)
+            if (addedOrder == null)
             {
                 throw new InvalidOperationException("Order not found after adding.");
             }
 
-            return @order;
+            return addedOrder;
         }
-
 
         public void Delete(Order @order)
         {
