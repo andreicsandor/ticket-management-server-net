@@ -9,4 +9,9 @@ public partial class Customer
     public string Email { get; set; } = string.Empty;
 
     public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
+
+    public override string ToString()
+    {
+        return CustomerName;
+    }
 }
