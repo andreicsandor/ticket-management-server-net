@@ -8,7 +8,7 @@ namespace ticket_management.Repository
 
         Task<Order> GetById(long id);
 
-        int Add(Order @order);
+        Task<Order> Add(Order @order);
 
         void Update(Order @order);
 

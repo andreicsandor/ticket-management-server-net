@@ -1,5 +1,6 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using ticket_management.Models;
 using ticket_management.Models.Dto;
 using ticket_management.Repository;
 
@@ -11,11 +12,15 @@ namespace ticket_management.Controllers
     {
         private readonly IOrderRepository _orderRepository;
         private readonly ITicketCategoryRepository _ticketCategoryRepository;
+        private readonly ICustomerRepository _customerRepository;
+        private readonly IMapper _mapper;
 
-        public OrderController(IOrderRepository orderRepository, ITicketCategoryRepository ticketCategoryRepository)
+        public OrderController(IOrderRepository orderRepository, ITicketCategoryRepository ticketCategoryRepository, ICustomerRepository customerRepository, IMapper mapper)
         {
             _orderRepository = orderRepository;
             _ticketCategoryRepository = ticketCategoryRepository;
+            _customerRepository = customerRepository;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -23,15 +28,18 @@ namespace ticket_management.Controllers
         {
             var orders = _orderRepository.GetAll();
 
+            /*
             var dtoOrders = orders.Select(o => new OrderDTO()
             {
-                CustomerName = o.Customer.CustomerName,
+                Customer = o.Customer.CustomerName,
                 TicketCategory = o.TicketCategory.TicketCategoryDescription,
                 OrderedAt = o.OrderedAt,
                 NumberOfTickets = o.NumberOfTickets,
                 TotalPrice = o.TotalPrice
             });
+            */
 
+            var dtoOrders = _mapper.Map<List<OrderDTO>>(orders);
 
             return Ok(dtoOrders);
         }
@@ -47,16 +55,48 @@ namespace ticket_management.Controllers
                 return NotFound();
             }
 
+            /*
             var dtoOrder = new OrderDTO()
             {
-                CustomerName = @order.Customer.CustomerName,
+                Customer = @order.Customer.CustomerName,
                 TicketCategory = @order.TicketCategory.TicketCategoryDescription,
                 OrderedAt = @order.OrderedAt,
                 NumberOfTickets = @order.NumberOfTickets,
                 TotalPrice = @order.TotalPrice
             };
+            */
+
+            var dtoOrder = _mapper.Map<OrderDTO>(@order);
 
             return Ok(dtoOrder);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<OrderDTO>> Create(OrderPostDTO newOrderDTO)
+        {
+            // Hardcode Customer ID
+            var customer = await _customerRepository.GetById(1L);
+
+            var ticketCategory = await _ticketCategoryRepository.GetById(newOrderDTO.TicketCategoryId);
+
+            var numberOfTickets = newOrderDTO.NumberOfTickets;
+            var date = DateTime.Now;
+            var totalPrice = (decimal)numberOfTickets * ticketCategory.Price;
+
+            var @order = new Order
+            {
+                CustomerId = (long)customer.CustomerId,
+                TicketCategoryId = (long)ticketCategory.TicketCategoryId,
+                OrderedAt = date,
+                NumberOfTickets = numberOfTickets,
+                TotalPrice = totalPrice
+            };
+
+            @order = await _orderRepository.Add(order);
+
+            if (@order == null) return BadRequest("Order could not be created");
+
+            return _mapper.Map<OrderDTO>(@order);
         }
 
         [HttpPatch]

@@ -12,10 +12,27 @@ namespace ticket_management.Repository
             _dbContext = new TicketManagementContext();
         }
 
-        public int Add(Order @order)
+        public async Task<Order> Add(Order @order)
         {
-            throw new NotImplementedException();
+            _dbContext.Orders.Add(@order);
+            await _dbContext.SaveChangesAsync();
+
+            var orderId = @order.OrderId;
+
+            @order = await _dbContext.Orders
+                .Where(e => e.OrderId == orderId)
+                .Include(o => o.Customer)
+                .Include(o => o.TicketCategory)
+                .FirstOrDefaultAsync();
+
+            if (@order == null)
+            {
+                throw new InvalidOperationException("Order not found after adding.");
+            }
+
+            return @order;
         }
+
 
         public void Delete(Order @order)
         {

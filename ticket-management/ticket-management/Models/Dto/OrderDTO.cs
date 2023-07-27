@@ -2,7 +2,7 @@
 {
 	public class OrderDTO
 	{
-        public string CustomerName { get; set; } = string.Empty;
+        public string Customer { get; set; } = string.Empty;
 
         public string TicketCategory { get; set; } = string.Empty;
 
