@@ -20,5 +20,14 @@ namespace ticket_management.Repository
 
             return @ticketcategory;
         }
+
+        public async Task<TicketCategory> GetById(long id)
+        {
+            var @ticketcategory = await _dbContext.TicketCategories
+                .Where(t => t.TicketCategoryId == id)
+                .FirstOrDefaultAsync();
+
+            return @ticketcategory;
+        }
     }
 }
