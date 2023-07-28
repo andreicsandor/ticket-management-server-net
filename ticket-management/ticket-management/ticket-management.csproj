@@ -30,6 +30,7 @@
     <None Remove="Service\" />
     <None Remove="Repository\Interfaces\" />
     <None Remove="Service\Interfaces\" />
+    <None Remove="Exceptions\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Controllers\" />
@@ -39,5 +40,6 @@
     <Folder Include="Service\" />
     <Folder Include="Repository\Interfaces\" />
     <Folder Include="Service\Interfaces\" />
+    <Folder Include="Exceptions\" />
   </ItemGroup>
 </Project>

@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using ticket_management.Api.Exceptions;
 using ticket_management.Models.Dto;
 using ticket_management.Repository;
 using ticket_management.Service.Interfaces;
@@ -56,51 +58,59 @@ namespace ticket_management.Service
 
         public async Task<EventDTO> GetById(long id)
         {
-            var @event = await _eventRepository.GetById(id);
-
-            /*
-            var dtoEvent = new EventDTO()
+            try
             {
-                EventDescription = @event.EventDescription,
-                EventName = @event.EventName,
-                EventType = @event.EventType.EventTypeName,
-                Venue = @event.Venue?.VenueLocation
-            };
-            */
+                var @event = await _eventRepository.GetById(id);
 
-            return _mapper.Map<EventDTO>(@event);
+                return _mapper.Map<EventDTO>(@event);
+            }
+            catch (EntityNotFoundException)
+            {
+                return null;
+            }
         }
 
         public async Task<bool> Update(EventPatchDTO eventPatch)
         {
-            var eventEntity = await _eventRepository.GetById(eventPatch.EventId);
+            try
+            {
+                var eventEntity = await _eventRepository.GetById(eventPatch.EventId);
 
-            if (eventEntity == null)
+                if (!string.IsNullOrEmpty(eventPatch.EventName)) eventEntity.EventName = eventPatch.EventName;
+                if (!string.IsNullOrEmpty(eventPatch.EventDescription)) eventEntity.EventDescription = eventPatch.EventDescription;
+
+                _eventRepository.Update(eventEntity);
+
+                return true;
+            }
+            catch (EntityNotFoundException)
             {
                 return false;
             }
-
-            if (!string.IsNullOrEmpty(eventPatch.EventName)) eventEntity.EventName = eventPatch.EventName;
-            if (!string.IsNullOrEmpty(eventPatch.EventDescription)) eventEntity.EventDescription = eventPatch.EventDescription;
-
-            _eventRepository.Update(eventEntity);
-
-            return true;
-
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         public async Task<bool> Delete(long id)
         {
-            var eventEntity = await _eventRepository.GetById(id);
+            try
+            {
+                var eventEntity = await _eventRepository.GetById(id);
 
-            if (eventEntity == null)
+                _eventRepository.Delete(eventEntity);
+
+                return true;
+            }
+            catch (EntityNotFoundException)
             {
                 return false;
             }
-
-            _eventRepository.Delete(eventEntity);
-
-            return true;
+            catch (Exception)
+            {
+                return false;
+            }
         }
     }
 }

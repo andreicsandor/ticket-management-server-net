@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ticket_management.Api.Exceptions;
 using ticket_management.Models;
 
 namespace ticket_management.Repository
@@ -18,7 +19,7 @@ namespace ticket_management.Repository
                 .Where(t => t.TicketCategoryId == id)
                 .FirstOrDefaultAsync();
 
-            return @ticketcategory;
+            return @ticketcategory == null ? throw new EntityNotFoundException(id, nameof(TicketCategory)) : @ticketcategory;
         }
 
         public async Task<TicketCategory> GetByName(string name)
@@ -27,7 +28,7 @@ namespace ticket_management.Repository
                 .Where(t => t.TicketCategoryDescription == name)
                 .FirstOrDefaultAsync();
 
-            return @ticketcategory;
+            return @ticketcategory == null ? throw new EntityNotFoundException(name, nameof(TicketCategory)) : @ticketcategory;
         }
     }
 }

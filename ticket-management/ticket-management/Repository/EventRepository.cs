@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ticket_management.Api.Exceptions;
 using ticket_management.Models;
 
 namespace ticket_management.Repository
@@ -63,19 +64,33 @@ namespace ticket_management.Repository
                 .Include(e => e.Venue)
                 .FirstOrDefaultAsync();
 
-            return @event;
+            return @event == null ? throw new EntityNotFoundException(id, nameof(Event)) : @event;
         }
 
         public void Update(Event @event)
         {
-            _dbContext.Entry(@event).State = EntityState.Modified;
-            _dbContext.SaveChanges();
+            try
+            {
+                _dbContext.Entry(@event).State = EntityState.Modified;
+                _dbContext.SaveChanges();
+            }
+            catch (DbUpdateException ex)
+            {
+                throw new Exception("An error occurred while updating the event.", ex);
+            }
         }
 
         public void Delete(Event @event)
         {
-            _dbContext.Remove(@event);
-            _dbContext.SaveChanges();
+            try
+            {
+                _dbContext.Remove(@event);
+                _dbContext.SaveChanges();
+            }
+            catch (DbUpdateException ex)
+            {
+                throw new Exception("An error occurred while deleting the event.", ex);
+            }
         }
     }
 }

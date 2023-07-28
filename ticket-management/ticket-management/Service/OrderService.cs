@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using ticket_management.Api.Exceptions;
 using ticket_management.Models;
 using ticket_management.Models.Dto;
 using ticket_management.Repository;
@@ -24,29 +26,34 @@ namespace ticket_management.Service
 
         public async Task<ActionResult<OrderDTO>> Create(OrderPostDTO newOrderDTO)
         {
-            // Hardcode Customer ID
-            var customer = await _customerService.GetById(1L);
-
-            var ticketCategory = await _ticketCategoryService.GetById(newOrderDTO.TicketCategoryId);
-
-            var numberOfTickets = newOrderDTO.NumberOfTickets;
-            var date = DateTime.Now;
-            var totalPrice = (decimal)numberOfTickets * ticketCategory.Price;
-
-            var @order = new Order
+            try
             {
-                CustomerId = (long)customer.CustomerId,
-                TicketCategoryId = (long)ticketCategory.TicketCategoryId,
-                OrderedAt = date,
-                NumberOfTickets = numberOfTickets,
-                TotalPrice = totalPrice
-            };
+                // Hardcode Customer ID
+                var customer = await _customerService.GetById(1L);
 
-            @order = await _orderRepository.Add(order);
+                var ticketCategory = await _ticketCategoryService.GetById(newOrderDTO.TicketCategoryId);
 
-            if (@order == null) return null;
+                var numberOfTickets = newOrderDTO.NumberOfTickets;
+                var date = DateTime.Now;
+                var totalPrice = (decimal)numberOfTickets * ticketCategory.Price;
 
-            return _mapper.Map<OrderDTO>(@order);
+                var @order = new Order
+                {
+                    CustomerId = (long)customer.CustomerId,
+                    TicketCategoryId = (long)ticketCategory.TicketCategoryId,
+                    OrderedAt = date,
+                    NumberOfTickets = numberOfTickets,
+                    TotalPrice = totalPrice
+                };
+
+                @order = await _orderRepository.Add(order);
+
+                return _mapper.Map<OrderDTO>(@order);
+            }
+            catch (InvalidOperationException)
+            {
+                return null;
+            }
         }
 
         public async Task<IEnumerable<OrderDTO>> GetAll()
@@ -69,57 +76,81 @@ namespace ticket_management.Service
 
         public async Task<OrderDTO> GetById(long id)
         {
-            var @order = await _orderRepository.GetById(id);
-
-            /*
-            var dtoOrder = new OrderDTO()
+            try
             {
-                Customer = @order.Customer.CustomerName,
-                TicketCategory = @order.TicketCategory.TicketCategoryDescription,
-                OrderedAt = @order.OrderedAt,
-                NumberOfTickets = @order.NumberOfTickets,
-                TotalPrice = @order.TotalPrice
-            };
-            */
+                var @order = await _orderRepository.GetById(id);
 
-            return _mapper.Map<OrderDTO>(@order);
+                /*
+                var dtoOrder = new OrderDTO()
+                {
+                    Customer = @order.Customer.CustomerName,
+                    TicketCategory = @order.TicketCategory.TicketCategoryDescription,
+                    OrderedAt = @order.OrderedAt,
+                    NumberOfTickets = @order.NumberOfTickets,
+                    TotalPrice = @order.TotalPrice
+                };
+                */
+
+                return _mapper.Map<OrderDTO>(@order);
+            }
+            catch (EntityNotFoundException)
+            {
+                return null;
+            }
         }
 
         public async Task<bool> Update(OrderPatchDTO orderPatch)
         {
-            var orderEntity = await _orderRepository.GetById(orderPatch.OrderId);
+            try
+            {
+                var orderEntity = await _orderRepository.GetById(orderPatch.OrderId);
 
-            if (orderEntity == null)
+                if (orderEntity == null)
+                {
+                    return false;
+                }
+
+                if (orderEntity.TicketCategory != null)
+                {
+                    var ticketCategory = await _ticketCategoryService.GetByName(orderPatch.TicketCategory);
+                    orderEntity.TicketCategoryId = ticketCategory.TicketCategoryId;
+
+                    orderEntity.NumberOfTickets = orderPatch.NumberOfTickets;
+                    orderEntity.TotalPrice = (decimal)orderEntity.NumberOfTickets * (orderEntity.TicketCategory.Price);
+                }
+
+                _orderRepository.Update(orderEntity);
+
+                return true;
+            }
+            catch (EntityNotFoundException)
             {
                 return false;
             }
-
-            if (orderEntity.TicketCategory != null)
+            catch (Exception)
             {
-                var ticketCategory = await _ticketCategoryService.GetByName(orderPatch.TicketCategory);
-                orderEntity.TicketCategoryId = ticketCategory.TicketCategoryId;
-
-                orderEntity.NumberOfTickets = orderPatch.NumberOfTickets;
-                orderEntity.TotalPrice = (decimal)orderEntity.NumberOfTickets * (orderEntity.TicketCategory.Price);
+                return false;
             }
-
-            _orderRepository.Update(orderEntity);
-
-            return true;
         }
 
         public async Task<bool> Delete(long id)
         {
-            var orderEntity = await _orderRepository.GetById(id);
+            try
+            {
+                var orderEntity = await _orderRepository.GetById(id);
 
-            if (orderEntity == null)
+                _orderRepository.Delete(orderEntity);
+
+                return true;
+            }
+            catch (EntityNotFoundException)
             {
                 return false;
             }
-
-            _orderRepository.Delete(orderEntity);
-
-            return true;
+            catch (Exception)
+            {
+                return false;
+            }
         }
     }
 }

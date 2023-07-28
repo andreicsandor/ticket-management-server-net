@@ -1,4 +1,5 @@
-﻿using ticket_management.Models;
+﻿using ticket_management.Api.Exceptions;
+using ticket_management.Models;
 using ticket_management.Repository;
 using ticket_management.Service.Interfaces;
 
@@ -15,16 +16,30 @@ namespace ticket_management.Service
 
         public async Task<TicketCategory> GetById(long id)
         {
-            var ticketCategory = await _ticketCategoryRepository.GetById(id);
+            try
+            {
+                var ticketCategory = await _ticketCategoryRepository.GetById(id);
 
-            return ticketCategory;
+                return ticketCategory;
+            }
+            catch (EntityNotFoundException)
+            {
+                return null;
+            }
         }
 
         public async Task<TicketCategory> GetByName(string name)
-        {
-            var ticketCategory = await _ticketCategoryRepository.GetByName(name);
+        { 
+            try
+            {
+                var ticketCategory = await _ticketCategoryRepository.GetByName(name);
 
-            return ticketCategory;
+                return ticketCategory;
+            }
+            catch (EntityNotFoundException)
+            {
+                return null;
+            }
         }
     }
 }

@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using ticket_management.Api.Exceptions;
 using ticket_management.Models;
 
 namespace ticket_management.Repository
@@ -26,6 +26,8 @@ namespace ticket_management.Repository
                 .Include(o => o.TicketCategory)
                 .FirstOrDefaultAsync();
 
+            if (addedOrder == null) throw new InvalidOperationException("Order creation failed.");
+
             return addedOrder;
         }
 
@@ -47,20 +49,33 @@ namespace ticket_management.Repository
                 .Include(o => o.TicketCategory)
                 .FirstOrDefaultAsync();
 
-            return @order;
+            return @order == null ? throw new EntityNotFoundException(id, nameof(Order)) : @order;
         }
 
         public void Update(Order @order)
         {
-            _dbContext.Entry(@order).State = EntityState.Modified;
-            _dbContext.SaveChanges();
+            try
+            {
+                _dbContext.Entry(@order).State = EntityState.Modified;
+                _dbContext.SaveChanges();
+            }
+            catch (DbUpdateException ex)
+            {
+                throw new Exception("An error occurred while updating the order.", ex);
+            }
         }
-
 
         public void Delete(Order @order)
         {
-            _dbContext.Remove(@order);
-            _dbContext.SaveChanges();
+            try
+            {
+                _dbContext.Remove(@order);
+                _dbContext.SaveChanges();
+            }
+            catch (DbUpdateException ex)
+            {
+                throw new Exception("An error occurred while deleting the order.", ex);
+            }
         }
     }
 }
