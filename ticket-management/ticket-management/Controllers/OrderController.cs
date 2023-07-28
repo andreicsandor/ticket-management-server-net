@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using ticket_management.Models;
 using ticket_management.Models.Dto;
 using ticket_management.Repository;
+using ticket_management.Service.Interfaces;
 
 namespace ticket_management.Controllers
 {
@@ -10,115 +11,63 @@ namespace ticket_management.Controllers
     [ApiController]
     public class OrderController : ControllerBase
     {
-        private readonly IOrderRepository _orderRepository;
-        private readonly ITicketCategoryRepository _ticketCategoryRepository;
-        private readonly ICustomerRepository _customerRepository;
-        private readonly IMapper _mapper;
+        private readonly IOrderService _orderService;
+        private readonly IEventService _eventService;
+        private readonly ICustomerService _customerService;
+        private readonly ITicketCategoryService _ticketCategoryService;
 
-        public OrderController(IOrderRepository orderRepository, ITicketCategoryRepository ticketCategoryRepository, ICustomerRepository customerRepository, IMapper mapper)
+        public OrderController(IOrderService orderService, IEventService eventService, ICustomerService customerService, ITicketCategoryService ticketCategoryService)
         {
-            _orderRepository = orderRepository;
-            _ticketCategoryRepository = ticketCategoryRepository;
-            _customerRepository = customerRepository;
-            _mapper = mapper;
+            _orderService = orderService;
+            _eventService = eventService;
+            _customerService = customerService;
+            _ticketCategoryService = ticketCategoryService;
         }
 
         [HttpGet]
-        public ActionResult<List<OrderDTO>> GetAll()
+        public async Task<ActionResult<List<OrderDTO>>> GetAll()
         {
-            var orders = _orderRepository.GetAll();
+            var orders = await _orderService.GetAll();
 
-            /*
-            var dtoOrders = orders.Select(o => new OrderDTO()
-            {
-                Customer = o.Customer.CustomerName,
-                TicketCategory = o.TicketCategory.TicketCategoryDescription,
-                OrderedAt = o.OrderedAt,
-                NumberOfTickets = o.NumberOfTickets,
-                TotalPrice = o.TotalPrice
-            });
-            */
-
-            var dtoOrders = _mapper.Map<List<OrderDTO>>(orders);
-
-            return Ok(dtoOrders);
+            return Ok(orders);
         }
 
 
         [HttpGet]
         public async Task<ActionResult<OrderDTO>> GetById(long id)
         {
-            var @order = await _orderRepository.GetById(id);
+            var @order = await _orderService.GetById(id);
 
             if (@order == null)
             {
                 return NotFound();
             }
 
-            /*
-            var dtoOrder = new OrderDTO()
-            {
-                Customer = @order.Customer.CustomerName,
-                TicketCategory = @order.TicketCategory.TicketCategoryDescription,
-                OrderedAt = @order.OrderedAt,
-                NumberOfTickets = @order.NumberOfTickets,
-                TotalPrice = @order.TotalPrice
-            };
-            */
-
-            var dtoOrder = _mapper.Map<OrderDTO>(@order);
-
-            return Ok(dtoOrder);
+            return Ok(@order);
         }
 
         [HttpPost]
         public async Task<ActionResult<OrderDTO>> Create(OrderPostDTO newOrderDTO)
         {
-            // Hardcode Customer ID
-            var customer = await _customerRepository.GetById(1L);
+            var @order = await _orderService.Create(newOrderDTO);
 
-            var ticketCategory = await _ticketCategoryRepository.GetById(newOrderDTO.TicketCategoryId);
-
-            var numberOfTickets = newOrderDTO.NumberOfTickets;
-            var date = DateTime.Now;
-            var totalPrice = (decimal)numberOfTickets * ticketCategory.Price;
-
-            var @order = new Order
+            if (@order == null)
             {
-                CustomerId = (long)customer.CustomerId,
-                TicketCategoryId = (long)ticketCategory.TicketCategoryId,
-                OrderedAt = date,
-                NumberOfTickets = numberOfTickets,
-                TotalPrice = totalPrice
-            };
+                return BadRequest();
+            }
 
-            @order = await _orderRepository.Add(order);
-
-            if (@order == null) return BadRequest("Order could not be created");
-
-            return _mapper.Map<OrderDTO>(@order);
+            return Ok(@order.Value);
         }
 
         [HttpPatch]
         public async Task<ActionResult<OrderPatchDTO>> Patch(OrderPatchDTO orderPatch)
         {
-            var orderEntity = await _orderRepository.GetById(orderPatch.OrderId);
+            var result = await _orderService.Update(orderPatch);
 
-            if (orderEntity == null)
+            if (!result)
             {
                 return NotFound();
             }
-
-            if (orderEntity.TicketCategory != null)
-            {
-                var ticketCategory = await _ticketCategoryRepository.GetByName(orderPatch.TicketCategory);
-                orderEntity.TicketCategoryId = ticketCategory.TicketCategoryId;
-
-                orderEntity.NumberOfTickets = orderPatch.NumberOfTickets;
-                orderEntity.TotalPrice = (decimal)orderEntity.NumberOfTickets * (orderEntity.TicketCategory.Price);
-            }
-
-            _orderRepository.Update(orderEntity);
 
             return NoContent();
         }
@@ -126,14 +75,12 @@ namespace ticket_management.Controllers
         [HttpDelete]
         public async Task<ActionResult> Delete(long id)
         {
-            var orderEntity = await _orderRepository.GetById(id);
+            var result = await _orderService.Delete(id);
 
-            if (orderEntity == null)
+            if (!result)
             {
                 return NotFound();
             }
-
-            _orderRepository.Delete(orderEntity);
 
             return NoContent();
         }

@@ -4,7 +4,7 @@ namespace ticket_management.Repository
 {
     public interface IEventRepository
     {
-        IEnumerable<Event> GetAll();
+        Task<IEnumerable<Event>> GetAll();
 
         Task<Event> GetById(long id);
 

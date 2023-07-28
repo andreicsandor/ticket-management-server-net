@@ -12,19 +12,19 @@ namespace ticket_management.Repository
             _dbContext = new TicketManagementContext();
         }
 
-        public async Task<TicketCategory> GetByName(string name)
+        public async Task<TicketCategory> GetById(long id)
         {
             var @ticketcategory = await _dbContext.TicketCategories
-                .Where(t => t.TicketCategoryDescription == name)
+                .Where(t => t.TicketCategoryId == id)
                 .FirstOrDefaultAsync();
 
             return @ticketcategory;
         }
 
-        public async Task<TicketCategory> GetById(long id)
+        public async Task<TicketCategory> GetByName(string name)
         {
             var @ticketcategory = await _dbContext.TicketCategories
-                .Where(t => t.TicketCategoryId == id)
+                .Where(t => t.TicketCategoryDescription == name)
                 .FirstOrDefaultAsync();
 
             return @ticketcategory;
