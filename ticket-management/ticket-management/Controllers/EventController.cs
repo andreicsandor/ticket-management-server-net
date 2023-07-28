@@ -24,17 +24,35 @@ namespace ticket_management.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<EventDTO>> GetById(long id)
+        public async Task<ActionResult<List<EventDTO>>> GetEvents([FromQuery] long? venueId, [FromQuery] string? eventTypeName)
         {
-            var @event = await _eventService.GetById(id);
-
-            if (@event == null)
+            if (venueId == null && eventTypeName == null)
             {
-                return NotFound();
+                var events = await _eventService.GetAll();
+                return Ok(events);
             }
-
-            return Ok(@event);
+            else if (venueId != null && eventTypeName == null)
+            {
+                var events = await _eventService.GetAllByVenue(venueId.Value);
+                return Ok(events);
+            }
+            else if (venueId == null && eventTypeName != null)
+            {
+                var events = await _eventService.GetAllByType(eventTypeName);
+                return Ok(events);
+            }
+            else if (venueId != null && eventTypeName != null)
+            {
+                var events = await _eventService.GetAllByVenueAndType(venueId.Value, eventTypeName);
+                return Ok(events);
+            }
+            else
+            {
+                var events = new List<EventDTO>();
+                return Ok(events);
+            }
         }
+
 
         [HttpPatch]
         public async Task<ActionResult<EventPatchDTO>> Patch(EventPatchDTO eventPatch)

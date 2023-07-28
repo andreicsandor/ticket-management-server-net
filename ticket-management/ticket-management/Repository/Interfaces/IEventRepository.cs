@@ -6,6 +6,12 @@ namespace ticket_management.Repository
     {
         Task<IEnumerable<Event>> GetAll();
 
+        Task<IEnumerable<Event>> GetAllByVenue(long venueId);
+
+        Task<IEnumerable<Event>> GetAllByType(string eventTypeName);
+
+        Task<IEnumerable<Event>> GetAllByVenueAndType(long venueId, string eventTypeName);
+
         Task<Event> GetById(long id);
 
         void Update(Event @event);

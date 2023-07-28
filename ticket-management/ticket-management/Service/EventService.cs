@@ -33,6 +33,27 @@ namespace ticket_management.Service
             return _mapper.Map<List<EventDTO>>(events);
         }
 
+        public async Task<IEnumerable<EventDTO>> GetAllByVenue(long venueId)
+        {
+            var events = await _eventRepository.GetAllByVenue(venueId);
+
+            return _mapper.Map<List<EventDTO>>(events);
+        }
+
+        public async Task<IEnumerable<EventDTO>> GetAllByType(string eventTypeName)
+        {
+            var events = await _eventRepository.GetAllByType(eventTypeName);
+
+            return _mapper.Map<List<EventDTO>>(events);
+        }
+
+        public async Task<IEnumerable<EventDTO>> GetAllByVenueAndType(long venueId, string eventTypeName)
+        {
+            var events = await _eventRepository.GetAllByVenueAndType(venueId, eventTypeName);
+
+            return _mapper.Map<List<EventDTO>>(events);
+        }
+
         public async Task<EventDTO> GetById(long id)
         {
             var @event = await _eventRepository.GetById(id);

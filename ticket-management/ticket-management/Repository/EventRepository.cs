@@ -22,6 +22,39 @@ namespace ticket_management.Repository
             return events;
         }
 
+        public async Task<IEnumerable<Event>> GetAllByVenue(long venueId)
+        {
+            var events = await _dbContext.Events
+                .Where(e => e.VenueId == venueId)
+                .Include(e => e.EventType)
+                .Include(e => e.Venue)
+                .ToListAsync();
+
+            return events;
+        }
+
+        public async Task<IEnumerable<Event>> GetAllByType(string eventTypeName)
+        {
+            var events = await _dbContext.Events
+                .Include(e => e.EventType)
+                .Include(e => e.Venue)
+                .Where(e => e.EventType.EventTypeName == eventTypeName)
+                .ToListAsync();
+
+            return events;
+        }
+
+        public async Task<IEnumerable<Event>> GetAllByVenueAndType(long venueId, string eventTypeName)
+        {
+            var events = await _dbContext.Events
+                .Include(e => e.EventType)
+                .Include(e => e.Venue)
+                .Where(e => e.VenueId == venueId && e.EventType.EventTypeName == eventTypeName)
+                .ToListAsync();
+
+            return events;
+        }
+
         public async Task<Event> GetById(long id)
         {
             var @event = await _dbContext.Events
