@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using ticket_management.Api.Exceptions;
+using ticket_management.Exceptions;
 using ticket_management.Models.Dto;
 using ticket_management.Service.Interfaces;
 
@@ -53,7 +53,6 @@ namespace ticket_management.Controllers
                 return Ok(events);
             }
         }
-
 
         [HttpPatch]
         public async Task<ActionResult<EventPatchDTO>> Patch(EventPatchDTO eventPatch)

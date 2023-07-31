@@ -1,9 +1,6 @@
-using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using ticket_management.Api.Exceptions;
-using ticket_management.Models;
+using ticket_management.Exceptions;
 using ticket_management.Models.Dto;
-using ticket_management.Repository;
 using ticket_management.Service.Interfaces;
 
 namespace ticket_management.Controllers
@@ -13,16 +10,10 @@ namespace ticket_management.Controllers
     public class OrderController : ControllerBase
     {
         private readonly IOrderService _orderService;
-        private readonly IEventService _eventService;
-        private readonly ICustomerService _customerService;
-        private readonly ITicketCategoryService _ticketCategoryService;
 
-        public OrderController(IOrderService orderService, IEventService eventService, ICustomerService customerService, ITicketCategoryService ticketCategoryService)
+        public OrderController(IOrderService orderService)
         {
             _orderService = orderService;
-            _eventService = eventService;
-            _customerService = customerService;
-            _ticketCategoryService = ticketCategoryService;
         }
 
         [HttpGet]

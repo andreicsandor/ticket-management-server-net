@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using ticket_management.Api.Exceptions;
+using ticket_management.Exceptions;
 using ticket_management.Models;
 
 namespace ticket_management.Repository

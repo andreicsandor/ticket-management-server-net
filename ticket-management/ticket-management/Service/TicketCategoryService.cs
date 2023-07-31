@@ -1,4 +1,4 @@
-﻿using ticket_management.Api.Exceptions;
+﻿using ticket_management.Exceptions;
 using ticket_management.Models;
 using ticket_management.Repository;
 using ticket_management.Service.Interfaces;

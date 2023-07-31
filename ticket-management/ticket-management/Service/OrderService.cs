@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using ticket_management.Api.Exceptions;
+using ticket_management.Exceptions;
 using ticket_management.Models;
 using ticket_management.Models.Dto;
 using ticket_management.Repository;
