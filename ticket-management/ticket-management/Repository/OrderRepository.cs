@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ticket_management.Api.Exceptions;
 using ticket_management.Models;
 
 namespace ticket_management.Repository
@@ -19,32 +20,23 @@ namespace ticket_management.Repository
 
             var orderId = @order.OrderId;
 
-            Order? addedOrder = await _dbContext.Orders
+            Order addedOrder = await _dbContext.Orders
                 .Where(e => e.OrderId == orderId)
                 .Include(o => o.Customer)
                 .Include(o => o.TicketCategory)
                 .FirstOrDefaultAsync();
 
-            if (addedOrder == null)
-            {
-                throw new InvalidOperationException("Order not found after adding.");
-            }
+            if (addedOrder == null) throw new InvalidOperationException("Order creation failed.");
 
             return addedOrder;
         }
 
-        public void Delete(Order @order)
+        public async Task<IEnumerable<Order>> GetAll()
         {
-            _dbContext.Remove(@order);
-            _dbContext.SaveChanges();
-        }
-
-        public IEnumerable<Order> GetAll()
-        {
-            var orders = _dbContext.Orders
+            var orders = await _dbContext.Orders
                 .Include(o => o.Customer)
                 .Include(o => o.TicketCategory)
-                .ToList();
+                .ToListAsync();
 
             return orders;
         }
@@ -57,13 +49,33 @@ namespace ticket_management.Repository
                 .Include(o => o.TicketCategory)
                 .FirstOrDefaultAsync();
 
-            return @order;
+            return @order == null ? throw new EntityNotFoundException(id, nameof(Order)) : @order;
         }
 
         public void Update(Order @order)
         {
-            _dbContext.Entry(@order).State = EntityState.Modified;
-            _dbContext.SaveChanges();
+            try
+            {
+                _dbContext.Entry(@order).State = EntityState.Modified;
+                _dbContext.SaveChanges();
+            }
+            catch (DbUpdateException ex)
+            {
+                throw new Exception("An error occurred while updating the order.", ex);
+            }
+        }
+
+        public void Delete(Order @order)
+        {
+            try
+            {
+                _dbContext.Remove(@order);
+                _dbContext.SaveChanges();
+            }
+            catch (DbUpdateException ex)
+            {
+                throw new Exception("An error occurred while deleting the order.", ex);
+            }
         }
     }
 }

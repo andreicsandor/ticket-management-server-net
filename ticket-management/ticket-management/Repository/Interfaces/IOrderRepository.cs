@@ -4,11 +4,11 @@ namespace ticket_management.Repository
 {
     public interface IOrderRepository
     {
-        IEnumerable<Order> GetAll();
+        Task<Order> Add(Order @order);
+
+        Task<IEnumerable<Order>> GetAll();
 
         Task<Order> GetById(long id);
-
-        Task<Order> Add(Order @order);
 
         void Update(Order @order);
 

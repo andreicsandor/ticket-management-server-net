@@ -27,11 +27,19 @@
     <None Remove="Repository\" />
     <None Remove="Models\Dto\" />
     <None Remove="Profiles\" />
+    <None Remove="Service\" />
+    <None Remove="Repository\Interfaces\" />
+    <None Remove="Service\Interfaces\" />
+    <None Remove="Exceptions\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Controllers\" />
     <Folder Include="Repository\" />
     <Folder Include="Models\Dto\" />
     <Folder Include="Profiles\" />
+    <Folder Include="Service\" />
+    <Folder Include="Repository\Interfaces\" />
+    <Folder Include="Service\Interfaces\" />
+    <Folder Include="Exceptions\" />
   </ItemGroup>
 </Project>

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ticket_management.Api.Exceptions;
 using ticket_management.Models;
 
 namespace ticket_management.Repository
@@ -18,7 +19,7 @@ namespace ticket_management.Repository
                 .Where(e => e.CustomerId == id)
                 .FirstOrDefaultAsync();
 
-            return customer;
+            return customer == null ? throw new EntityNotFoundException(id, nameof(Customer)) : customer;
         }
     }
 }

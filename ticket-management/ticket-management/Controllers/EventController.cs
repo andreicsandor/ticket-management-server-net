@@ -1,7 +1,7 @@
-using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using ticket_management.Api.Exceptions;
 using ticket_management.Models.Dto;
-using ticket_management.Repository;
+using ticket_management.Service.Interfaces;
 
 namespace ticket_management.Controllers
 {
@@ -9,92 +9,94 @@ namespace ticket_management.Controllers
     [ApiController]
     public class EventController : ControllerBase
     {
-        private readonly IEventRepository _eventRepository;
-        private readonly IMapper _mapper;
+        private readonly IEventService _eventService;
 
-        public EventController(IEventRepository eventRepository, IMapper mapper)
+        public EventController(IEventService eventService)
         {
-            _eventRepository = eventRepository;
-            _mapper = mapper;
+            _eventService = eventService;
         }
 
         [HttpGet]
-        public ActionResult<List<EventDTO>> GetAll()
+        public async Task<ActionResult<List<EventDTO>>> GetAll()
         {
-            var events = _eventRepository.GetAll();
+            var events = await _eventService.GetAll();
 
-            /*
-            var dtoEvents = events.Select(e => new EventDTO()
-            {
-                EventDescription = e.EventDescription,
-                EventName = e.EventName,
-                EventType = e.EventType.EventTypeName,
-                Venue = e.Venue?.VenueLocation
-            });
-            */
-
-            var dtoEvents = _mapper.Map<List<EventDTO>>(events);
-
-            return Ok(dtoEvents);
+            return Ok(events);
         }
 
-
         [HttpGet]
-        public async Task<ActionResult<EventDTO>> GetById(long id)
+        public async Task<ActionResult<List<EventDTO>>> GetEvents([FromQuery] long? venueId, [FromQuery] string? eventTypeName)
         {
-            var @event = await _eventRepository.GetById(id);
-
-            if (@event == null)
+            if (venueId == null && String.IsNullOrEmpty(eventTypeName))
             {
-                return NotFound();
+                var events = await _eventService.GetAll();
+                return Ok(events);
             }
-
-            /*
-            var dtoEvent = new EventDTO()
+            else if (venueId != null && String.IsNullOrEmpty(eventTypeName))
             {
-                EventDescription = @event.EventDescription,
-                EventName = @event.EventName,
-                EventType = @event.EventType.EventTypeName,
-                Venue = @event.Venue?.VenueLocation
-            };
-            */
-
-            var dtoEvent = _mapper.Map<EventDTO>(@event);
-
-            return Ok(dtoEvent);
+                var events = await _eventService.GetAllByVenue(venueId.Value);
+                return Ok(events);
+            }
+            else if (venueId == null && !String.IsNullOrEmpty(eventTypeName))
+            {
+                var events = await _eventService.GetAllByType(eventTypeName);
+                return Ok(events);
+            }
+            else if (venueId != null && !String.IsNullOrEmpty(eventTypeName))
+            {
+                var events = await _eventService.GetAllByVenueAndType(venueId.Value, eventTypeName);
+                return Ok(events);
+            }
+            else
+            {
+                var events = new List<EventDTO>();
+                return Ok(events);
+            }
         }
+
 
         [HttpPatch]
         public async Task<ActionResult<EventPatchDTO>> Patch(EventPatchDTO eventPatch)
         {
-            var eventEntity = await _eventRepository.GetById(eventPatch.EventId);
+            var result = await _eventService.Update(eventPatch);
 
-            if (eventEntity == null)
+            if (!result)
             {
                 return NotFound();
             }
 
-            if (!string.IsNullOrEmpty(eventPatch.EventName)) eventEntity.EventName = eventPatch.EventName;
-            if (!string.IsNullOrEmpty(eventPatch.EventDescription)) eventEntity.EventDescription = eventPatch.EventDescription;
-
-            _eventRepository.Update(eventEntity);
-
-            return NoContent();
+            return Ok();
         }
 
         [HttpDelete]
         public async Task<ActionResult> Delete(long id)
         {
-            var eventEntity = await _eventRepository.GetById(id);
+            EventDTO eventDTO;
 
-            if (eventEntity == null)
+            try
+            {
+                eventDTO = await _eventService.GetById(id);
+            }
+            catch (EntityNotFoundException)
             {
                 return NotFound();
             }
 
-            _eventRepository.Delete(eventEntity);
+            try
+            {
+                var result = _eventService.Delete(eventDTO);
 
-            return NoContent();
+                if (!result)
+                {
+                    return NotFound();
+                }
+
+                return Ok();
+            }
+            catch (Exception)
+            {
+                return NotFound();
+            }
         }
     }
 }

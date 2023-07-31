@@ -1,4 +1,6 @@
 ﻿using ticket_management.Repository;
+using ticket_management.Service;
+using ticket_management.Service.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,10 +10,17 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
 builder.Services.AddTransient<IEventRepository, EventRepository>();
 builder.Services.AddTransient<IOrderRepository, OrderRepository>();
 builder.Services.AddTransient<ITicketCategoryRepository, TicketCategoryRepository>();
 builder.Services.AddTransient<ICustomerRepository, CustomerRepository>();
+
+builder.Services.AddTransient<IEventService, EventService>();
+builder.Services.AddTransient<IOrderService, OrderService>();
+builder.Services.AddTransient<ITicketCategoryService, TicketCategoryService>();
+builder.Services.AddTransient<ICustomerService, CustomerService>();
+
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 var app = builder.Build();
