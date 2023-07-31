@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "dMoYTo0S+Fqw16W1wmwW3J6cCjr+yYTkSnM4EpSuVjPGMW8nQqqY5Y0+gdevxFeQ+THaNwiIm4QROklsYQkEFw==",
+  "dgSpecHash": "WGRdeeTZnCYyVXgqy/L4T4W1HJEW2D52iLXpQVw3kIK4/yX9PwSuxd5ZSpN1H0tY/mmh6cUYqtyJgz+gSN+EfQ==",
   "success": true,
   "projectFilePath": "/Users/Andrei/Documents/Workspace/Coding/apprentice/en-summer-apprentice-net/ticket-management/ticket-management/ticket-management.csproj",
   "expectedPackageFiles": [
@@ -8,6 +8,7 @@
     "/Users/Andrei/.nuget/packages/automapper.extensions.microsoft.dependencyinjection/12.0.1/automapper.extensions.microsoft.dependencyinjection.12.0.1.nupkg.sha512",
     "/Users/Andrei/.nuget/packages/azure.core/1.24.0/azure.core.1.24.0.nupkg.sha512",
     "/Users/Andrei/.nuget/packages/azure.identity/1.6.0/azure.identity.1.6.0.nupkg.sha512",
+    "/Users/Andrei/.nuget/packages/castle.core/5.1.1/castle.core.5.1.1.nupkg.sha512",
     "/Users/Andrei/.nuget/packages/humanizer/2.14.1/humanizer.2.14.1.nupkg.sha512",
     "/Users/Andrei/.nuget/packages/humanizer.core/2.14.1/humanizer.core.2.14.1.nupkg.sha512",
     "/Users/Andrei/.nuget/packages/humanizer.core.af/2.14.1/humanizer.core.af.2.14.1.nupkg.sha512",
@@ -121,6 +122,7 @@
     "/Users/Andrei/.nuget/packages/microsoft.win32.registry/5.0.0/microsoft.win32.registry.5.0.0.nupkg.sha512",
     "/Users/Andrei/.nuget/packages/microsoft.win32.systemevents/6.0.0/microsoft.win32.systemevents.6.0.0.nupkg.sha512",
     "/Users/Andrei/.nuget/packages/mono.texttemplating/2.2.1/mono.texttemplating.2.2.1.nupkg.sha512",
+    "/Users/Andrei/.nuget/packages/moq/4.18.4/moq.4.18.4.nupkg.sha512",
     "/Users/Andrei/.nuget/packages/netstandard.library/1.6.1/netstandard.library.1.6.1.nupkg.sha512",
     "/Users/Andrei/.nuget/packages/newtonsoft.json/13.0.1/newtonsoft.json.13.0.1.nupkg.sha512",
     "/Users/Andrei/.nuget/packages/nuget.common/6.3.1/nuget.common.6.3.1.nupkg.sha512",
@@ -169,6 +171,7 @@
     "/Users/Andrei/.nuget/packages/system.data.datasetextensions/4.5.0/system.data.datasetextensions.4.5.0.nupkg.sha512",
     "/Users/Andrei/.nuget/packages/system.diagnostics.debug/4.3.0/system.diagnostics.debug.4.3.0.nupkg.sha512",
     "/Users/Andrei/.nuget/packages/system.diagnostics.diagnosticsource/5.0.0/system.diagnostics.diagnosticsource.5.0.0.nupkg.sha512",
+    "/Users/Andrei/.nuget/packages/system.diagnostics.eventlog/6.0.0/system.diagnostics.eventlog.6.0.0.nupkg.sha512",
     "/Users/Andrei/.nuget/packages/system.diagnostics.tools/4.3.0/system.diagnostics.tools.4.3.0.nupkg.sha512",
     "/Users/Andrei/.nuget/packages/system.diagnostics.tracing/4.3.0/system.diagnostics.tracing.4.3.0.nupkg.sha512",
     "/Users/Andrei/.nuget/packages/system.drawing.common/6.0.0/system.drawing.common.6.0.0.nupkg.sha512",

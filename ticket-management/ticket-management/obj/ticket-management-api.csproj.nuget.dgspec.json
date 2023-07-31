@@ -1,15 +1,15 @@
 {
   "format": 1,
   "restore": {
-    "/Users/Andrei/Documents/Workspace/Coding/apprentice/en-summer-apprentice-net/ticket-management/ticket-management/ticket-management.csproj": {}
+    "/Users/Andrei/Documents/Workspace/Coding/apprentice/en-summer-apprentice-net/ticket-management/ticket-management/ticket-management-api.csproj": {}
   },
   "projects": {
-    "/Users/Andrei/Documents/Workspace/Coding/apprentice/en-summer-apprentice-net/ticket-management/ticket-management/ticket-management.csproj": {
+    "/Users/Andrei/Documents/Workspace/Coding/apprentice/en-summer-apprentice-net/ticket-management/ticket-management/ticket-management-api.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/Andrei/Documents/Workspace/Coding/apprentice/en-summer-apprentice-net/ticket-management/ticket-management/ticket-management.csproj",
-        "projectName": "ticket-management",
-        "projectPath": "/Users/Andrei/Documents/Workspace/Coding/apprentice/en-summer-apprentice-net/ticket-management/ticket-management/ticket-management.csproj",
+        "projectUniqueName": "/Users/Andrei/Documents/Workspace/Coding/apprentice/en-summer-apprentice-net/ticket-management/ticket-management/ticket-management-api.csproj",
+        "projectName": "ticket-management-api",
+        "projectPath": "/Users/Andrei/Documents/Workspace/Coding/apprentice/en-summer-apprentice-net/ticket-management/ticket-management/ticket-management-api.csproj",
         "packagesPath": "/Users/Andrei/.nuget/packages/",
         "outputPath": "/Users/Andrei/Documents/Workspace/Coding/apprentice/en-summer-apprentice-net/ticket-management/ticket-management/obj/",
         "projectStyle": "PackageReference",
@@ -65,10 +65,6 @@
             "Microsoft.VisualStudio.Web.CodeGeneration.Design": {
               "target": "Package",
               "version": "[7.0.8, )"
-            },
-            "Moq": {
-              "target": "Package",
-              "version": "[4.18.4, )"
             },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
