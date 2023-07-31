@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using ticket_management.Api.Exceptions;
+using ticket_management.Models;
 using ticket_management.Models.Dto;
 using ticket_management.Repository;
 using ticket_management.Service.Interfaces;
@@ -93,11 +94,11 @@ namespace ticket_management.Service
             }
         }
 
-        public async Task<bool> Delete(long id)
+        public bool Delete(EventDTO eventDTO)
         {
             try
             {
-                var eventEntity = await _eventRepository.GetById(id);
+                var eventEntity = _mapper.Map<Event>(eventDTO);
 
                 _eventRepository.Delete(eventEntity);
 

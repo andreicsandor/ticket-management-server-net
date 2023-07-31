@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using ticket_management.Api.Exceptions;
 using ticket_management.Models.Dto;
 using ticket_management.Service.Interfaces;
 
@@ -26,22 +27,22 @@ namespace ticket_management.Controllers
         [HttpGet]
         public async Task<ActionResult<List<EventDTO>>> GetEvents([FromQuery] long? venueId, [FromQuery] string? eventTypeName)
         {
-            if (venueId == null && eventTypeName == null)
+            if (venueId == null && String.IsNullOrEmpty(eventTypeName))
             {
                 var events = await _eventService.GetAll();
                 return Ok(events);
             }
-            else if (venueId != null && eventTypeName == null)
+            else if (venueId != null && String.IsNullOrEmpty(eventTypeName))
             {
                 var events = await _eventService.GetAllByVenue(venueId.Value);
                 return Ok(events);
             }
-            else if (venueId == null && eventTypeName != null)
+            else if (venueId == null && !String.IsNullOrEmpty(eventTypeName))
             {
                 var events = await _eventService.GetAllByType(eventTypeName);
                 return Ok(events);
             }
-            else if (venueId != null && eventTypeName != null)
+            else if (venueId != null && !String.IsNullOrEmpty(eventTypeName))
             {
                 var events = await _eventService.GetAllByVenueAndType(venueId.Value, eventTypeName);
                 return Ok(events);
@@ -64,20 +65,38 @@ namespace ticket_management.Controllers
                 return NotFound();
             }
 
-            return NoContent();
+            return Ok();
         }
 
         [HttpDelete]
         public async Task<ActionResult> Delete(long id)
         {
-            var result = await _eventService.Delete(id);
+            EventDTO eventDTO;
 
-            if (!result)
+            try
+            {
+                eventDTO = await _eventService.GetById(id);
+            }
+            catch (EntityNotFoundException)
             {
                 return NotFound();
             }
 
-            return NoContent();
+            try
+            {
+                var result = _eventService.Delete(eventDTO);
+
+                if (!result)
+                {
+                    return NotFound();
+                }
+
+                return Ok();
+            }
+            catch (Exception)
+            {
+                return NotFound();
+            }
         }
     }
 }

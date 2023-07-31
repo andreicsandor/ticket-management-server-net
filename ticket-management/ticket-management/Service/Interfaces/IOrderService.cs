@@ -13,6 +13,6 @@ namespace ticket_management.Service.Interfaces
 
         Task<bool> Update(OrderPatchDTO orderPatch);
 
-        Task<bool> Delete(long id);
+        bool Delete(OrderDTO orderDTO);
     }
 }

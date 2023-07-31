@@ -16,6 +16,6 @@ namespace ticket_management.Service.Interfaces
 
         Task<bool> Update(EventPatchDTO eventPatch);
 
-        Task<bool> Delete(long id);
+        bool Delete(EventDTO eventDTO);
     }
 }

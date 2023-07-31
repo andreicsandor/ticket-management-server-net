@@ -1,5 +1,6 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using ticket_management.Api.Exceptions;
 using ticket_management.Models;
 using ticket_management.Models.Dto;
 using ticket_management.Repository;
@@ -69,20 +70,38 @@ namespace ticket_management.Controllers
                 return NotFound();
             }
 
-            return NoContent();
+            return Ok();
         }
 
         [HttpDelete]
         public async Task<ActionResult> Delete(long id)
         {
-            var result = await _orderService.Delete(id);
+            OrderDTO orderDTO;
 
-            if (!result)
+            try
+            {
+                orderDTO = await _orderService.GetById(id);
+            }
+            catch (EntityNotFoundException)
             {
                 return NotFound();
             }
 
-            return NoContent();
+            try
+            {
+                var result = _orderService.Delete(orderDTO);
+
+                if (!result)
+                {
+                    return NotFound();
+                }
+
+                return Ok();
+            }
+            catch (Exception)
+            {
+                return NotFound();
+            }
         }
     }
 }

@@ -133,11 +133,11 @@ namespace ticket_management.Service
             }
         }
 
-        public async Task<bool> Delete(long id)
+        public bool Delete(OrderDTO orderDTO)   
         {
             try
             {
-                var orderEntity = await _orderRepository.GetById(id);
+                var orderEntity = _mapper.Map<Order>(orderDTO);
 
                 _orderRepository.Delete(orderEntity);
 
