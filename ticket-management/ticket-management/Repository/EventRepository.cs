@@ -18,6 +18,7 @@ namespace ticket_management.Repository
             var events = await _dbContext.Events
                 .Include(e => e.EventType)
                 .Include(e => e.Venue)
+                .Include(e => e.TicketCategories)
                 .ToListAsync();
 
             return events;
@@ -29,6 +30,7 @@ namespace ticket_management.Repository
                 .Where(e => e.VenueId == venueId)
                 .Include(e => e.EventType)
                 .Include(e => e.Venue)
+                .Include(e => e.TicketCategories)
                 .ToListAsync();
 
             return events;
@@ -39,6 +41,7 @@ namespace ticket_management.Repository
             var events = await _dbContext.Events
                 .Include(e => e.EventType)
                 .Include(e => e.Venue)
+                .Include(e => e.TicketCategories)
                 .Where(e => e.EventType.EventTypeName == eventTypeName)
                 .ToListAsync();
 
@@ -50,6 +53,7 @@ namespace ticket_management.Repository
             var events = await _dbContext.Events
                 .Include(e => e.EventType)
                 .Include(e => e.Venue)
+                .Include(e => e.TicketCategories)
                 .Where(e => e.VenueId == venueId && e.EventType.EventTypeName == eventTypeName)
                 .ToListAsync();
 
@@ -62,6 +66,7 @@ namespace ticket_management.Repository
                 .Where(e => e.EventId == id)
                 .Include(e => e.EventType)
                 .Include(e => e.Venue)
+                .Include(e => e.TicketCategories)
                 .FirstOrDefaultAsync();
 
             return @event == null ? throw new EntityNotFoundException(id, nameof(Event)) : @event;

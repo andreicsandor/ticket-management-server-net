@@ -67,6 +67,9 @@ public partial class TicketManagementContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("event_name");
             entity.Property(e => e.EventTypeId).HasColumnName("event_type_id");
+            entity.Property(e => e.EventImage)
+                .HasMaxLength(255)
+                .HasColumnName("event_image");
             entity.Property(e => e.StartDate)
                 .HasColumnType("datetime")
                 .HasColumnName("start_date");
