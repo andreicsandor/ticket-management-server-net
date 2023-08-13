@@ -94,11 +94,16 @@ namespace ticket_management.Service
             }
         }
 
-        public bool Delete(EventDTO eventDTO)
+        public async Task<bool> Delete(long eventId)
         {
             try
             {
-                var eventEntity = _mapper.Map<Event>(eventDTO);
+                var eventEntity = await _eventRepository.GetById(eventId);
+
+                if (eventEntity == null)
+                {
+                    throw new EntityNotFoundException();
+                }
 
                 _eventRepository.Delete(eventEntity);
 

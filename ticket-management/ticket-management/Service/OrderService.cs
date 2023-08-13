@@ -39,6 +39,7 @@ namespace ticket_management.Service
                 var @order = new Order
                 {
                     CustomerId = (long)customer.CustomerId,
+                    EventId = (long)ticketCategory.EventId,
                     TicketCategoryId = (long)ticketCategory.TicketCategoryId,
                     OrderedAt = date,
                     NumberOfTickets = numberOfTickets,
@@ -132,11 +133,16 @@ namespace ticket_management.Service
             }
         }
 
-        public bool Delete(OrderDTO orderDTO)   
+        public async Task<bool> Delete(long orderId)
         {
             try
             {
-                var orderEntity = _mapper.Map<Order>(orderDTO);
+                var orderEntity = await _orderRepository.GetById(orderId);
+
+                if (orderEntity == null)
+                {
+                    throw new EntityNotFoundException();
+                }
 
                 _orderRepository.Delete(orderEntity);
 

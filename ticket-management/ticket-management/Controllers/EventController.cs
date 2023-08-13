@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using ticket_management.Exceptions;
+using ticket_management.Models;
 using ticket_management.Models.Dto;
+using ticket_management.Service;
 using ticket_management.Service.Interfaces;
 
 namespace ticket_management.Controllers
@@ -54,6 +56,19 @@ namespace ticket_management.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<ActionResult<EventDTO>> GetById(long id)
+        {
+            var @event = await _eventService.GetById(id);
+
+            if (@event == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(@event);
+        }
+
         [HttpPatch]
         public async Task<ActionResult<EventPatchDTO>> Patch(EventPatchDTO eventPatch)
         {
@@ -70,20 +85,9 @@ namespace ticket_management.Controllers
         [HttpDelete]
         public async Task<ActionResult> Delete(long id)
         {
-            EventDTO eventDTO;
-
             try
             {
-                eventDTO = await _eventService.GetById(id);
-            }
-            catch (EntityNotFoundException)
-            {
-                return NotFound();
-            }
-
-            try
-            {
-                var result = _eventService.Delete(eventDTO);
+                var result = await _eventService.Delete(id);
 
                 if (!result)
                 {
@@ -92,9 +96,13 @@ namespace ticket_management.Controllers
 
                 return Ok();
             }
-            catch (Exception)
+            catch (EntityNotFoundException)
             {
                 return NotFound();
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
             }
         }
     }

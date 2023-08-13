@@ -6,6 +6,8 @@ public partial class Order
 
     public long CustomerId { get; set; }
 
+    public long EventId { get; set; }
+
     public long TicketCategoryId { get; set; }
 
     public DateTime OrderedAt { get; set; }

@@ -67,20 +67,9 @@ namespace ticket_management.Controllers
         [HttpDelete]
         public async Task<ActionResult> Delete(long id)
         {
-            OrderDTO orderDTO;
-
             try
             {
-                orderDTO = await _orderService.GetById(id);
-            }
-            catch (EntityNotFoundException)
-            {
-                return NotFound();
-            }
-
-            try
-            {
-                var result = _orderService.Delete(orderDTO);
+                var result = await _orderService.Delete(id);
 
                 if (!result)
                 {
@@ -89,9 +78,13 @@ namespace ticket_management.Controllers
 
                 return Ok();
             }
-            catch (Exception)
+            catch (EntityNotFoundException)
             {
                 return NotFound();
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
             }
         }
     }

@@ -103,6 +103,7 @@ public partial class TicketManagementContext : DbContext
 
             entity.Property(e => e.OrderId).HasColumnName("order_id");
             entity.Property(e => e.CustomerId).HasColumnName("customer_id");
+            entity.Property(e => e.EventId).HasColumnName("event_id");
             entity.Property(e => e.NumberOfTickets).HasColumnName("number_of_tickets");
             entity.Property(e => e.OrderedAt)
                 .HasColumnType("datetime")
