@@ -116,7 +116,9 @@ namespace ticket_management.Service
                     orderEntity.TicketCategoryId = ticketCategory.TicketCategoryId;
 
                     orderEntity.NumberOfTickets = orderPatch.NumberOfTickets;
-                    orderEntity.TotalPrice = (decimal)orderEntity.NumberOfTickets * (orderEntity.TicketCategory.Price);
+
+                    var price = ticketCategory.Price;
+                    orderEntity.TotalPrice = (decimal)orderEntity.NumberOfTickets * price;
                 }
 
                 _orderRepository.Update(orderEntity);
