@@ -2,6 +2,8 @@
 {
     public class EventDTO
     {
+        public string EventId { get; set; } = string.Empty;
+
         public string EventDescription { get; set; } = string.Empty;
 
         public string EventName { get; set; } = string.Empty;
@@ -14,7 +16,7 @@
 
         public string EventType { get; set; } = string.Empty;
 
-        public string Venue { get; set; } = string.Empty;
+        public VenueDTO Venue { get; set; }
 
         public List<TicketCategoryDTO> TicketCategories { get; set; } = new List<TicketCategoryDTO>();
     }

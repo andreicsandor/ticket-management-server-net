@@ -150,6 +150,7 @@ public partial class TicketManagementContext : DbContext
             entity.ToTable("Venue");
 
             entity.Property(e => e.VenueId).HasColumnName("venue_id");
+            entity.Property(e => e.VenueName).HasColumnName("venue_name");
             entity.Property(e => e.VenueCapacity).HasColumnName("venue_capacity");
             entity.Property(e => e.VenueLocation)
                 .HasMaxLength(50)

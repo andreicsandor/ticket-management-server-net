@@ -4,6 +4,8 @@ public partial class Venue
 {
     public long VenueId { get; set; }
 
+    public string VenueName { get; set; } = string.Empty;
+
     public string VenueLocation { get; set; } = string.Empty;
 
     public string VenueType { get; set; } = string.Empty;
