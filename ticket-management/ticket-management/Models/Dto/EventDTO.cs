@@ -2,6 +2,8 @@
 {
     public class EventDTO
     {
+        public long EventId { get; set; }
+
         public string EventDescription { get; set; } = string.Empty;
 
         public string EventName { get; set; } = string.Empty;
